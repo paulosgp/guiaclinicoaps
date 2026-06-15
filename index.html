@@ -1187,7 +1187,10 @@ function showAvisoSeguranca(cb){
     '<div class="lic-logo" style="background:var(--alarme)">&#9888;&#65039;</div>'+
     '<h2 style="margin-bottom:4px">Antes de começar — leia</h2>'+
     AVISO_TEXTO+
-    '<label style="display:flex;gap:9px;align-items:flex-start;margin:6px 0 14px;font-size:14px;text-align:left;cursor:pointer"><input type="checkbox" id="aviso_ck" style="margin-top:3px;flex:0 0 auto"> <span>Li e compreendi. Vou usar o aplicativo como <b>apoio à decisão</b>, respeitando os limites legais da enfermagem e encaminhando ao médico quando indicado.</span></label>'+
+    '<div style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin:10px 0 16px">'+
+      '<input type="checkbox" id="aviso_ck" style="width:18px;min-width:18px;height:18px;margin:2px 0 0;padding:0;flex:0 0 auto;-webkit-appearance:checkbox;appearance:auto;cursor:pointer">'+
+      '<label for="aviso_ck" style="display:block;margin:0;font-size:14px;font-weight:400;color:var(--ink);text-transform:none;letter-spacing:normal;line-height:1.5;cursor:pointer">Li e compreendi. Vou usar o aplicativo como <b>apoio à decisão</b>, respeitando os limites legais da enfermagem e encaminhando ao médico quando indicado.</label>'+
+    '</div>'+
     '<button class="btn primary lic-btn" id="aviso_btn" onclick="aceitarAviso()">Concordo e quero continuar</button>'+
     '</div></div>';
   document.getElementById('ft').innerHTML=''; window.scrollTo(0,0);
