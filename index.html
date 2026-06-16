@@ -570,7 +570,8 @@ function synFor(phrase, toks){
   }
   return Array.from(add);
 }
-function search(q){
+function search(q){ return searchScored(q).map(function(x){return x.r;}); }
+function searchScored(q){
   var phrase=clean(q); if(phrase.length<2) return [];
   var rawToks=phrase.split(' ').filter(Boolean);
   var neg=new Set();
@@ -595,7 +596,7 @@ function search(q){
     if(sc>0) res.push({r:r,sc:sc});
   }
   res.sort(function(a,b){ return b.sc-a.sc || a.r.titulo.localeCompare(b.r.titulo,'pt'); });
-  return res.slice(0,60).map(function(x){return x.r;});
+  return res.slice(0,60);
 }
 function didYouMean(q){
   var toks=tokenize(q); if(!toks.length) return null;
@@ -925,9 +926,15 @@ function assistIniciar(){
   var ta=document.getElementById('caso'); var caso=(ta?ta.value:'').trim();
   var out=document.getElementById('assistOut');
   if(caso.length<6){ if(out) out.innerHTML='<div class="empty">Descreva o caso com um pouco mais de detalhe (idade, sexo, queixa e tempo de evolução).</div>'; return; }
-  var recs=search(caso).filter(function(r){ return !assistCategoriaExcluida(r); }).slice(0,12);
-  if(!recs.length){ if(out) out.innerHTML='<div class="empty">Não encontrei condições relacionadas na base. Tente descrever a queixa/sintomas principais.</div>'; return; }
-  var cand=recs.map(function(r,i){ return {r:r, base:(12-i)}; });
+  var scored=searchScored(caso).filter(function(x){ return !assistCategoriaExcluida(x.r); });
+  if(!scored.length){ if(out) out.innerHTML='<div class="empty">Não encontrei condições relacionadas na base. Tente descrever a queixa/sintomas principais.</div>'; return; }
+  // Âncora de relevância: só entram condições com match forte o bastante com a QUEIXA,
+  // para evitar que respostas posteriores façam um match fraco (ex.: "dor") flutuar para cima.
+  var topSc=scored[0].sc;
+  var pool=scored.filter(function(x){ return x.sc >= Math.max(topSc*0.45, 10); });
+  if(pool.length<3) pool=scored.slice(0, Math.min(5, scored.length));
+  pool=pool.slice(0,8);
+  var cand=pool.map(function(x,i){ return {r:x.r, base:(pool.length-i)}; });
   var phrase=clean(caso); var toks=phrase.split(' ').filter(Boolean); var neg=assistNeg(toks);
   var ans={}, pre=[];
   ANAMNESE.forEach(function(f){
@@ -942,9 +949,12 @@ function assistIniciar(){
 function assistRecalc(){
   if(!ASSIST) return;
   ASSIST.cand.forEach(function(c){
-    var sc=c.base*2;
+    var sc=c.base*3;   // relevância com a queixa pesa mais (âncora)
     for(var id in ASSIST.ans){ var f=AFBYID[id]; if(!f) continue; var a=ASSIST.ans[id]; if(a==='naosei') continue; var has=recHasFeature(c.r,f);
-      if(a==='sim'){ if(has) sc+=4; } else if(a==='nao'){ if(has) sc-=3; } }
+      var fator=(f.tipo==='fator');   // contexto (idoso, hipertensão, gestante...) = sinal fraco
+      if(a==='sim'){ if(has) sc+= (fator?1:4); }
+      else if(a==='nao'){ if(has) sc-= (fator?0:2); }   // "Não" penaliza menos (condição pode não ter todo sintoma)
+    }
     c.score=sc;
   });
   ASSIST.cand.sort(function(a,b){ return b.score-a.score || a.r.titulo.localeCompare(b.r.titulo,'pt'); });
