@@ -296,6 +296,7 @@ var DEMO_IDS = [];      // ids liberados na demo
 // ===== Atualização online + bloqueio/desbloqueio (opcional) =====
 var UPDATE_KEY = "GuiaClinicoAPS::upd::ffccf8d79f87b7fb45670d318dcdaa0abc5b3be391cc24c7::PAULO";
 var UPDATE_URL = "https://raw.githubusercontent.com/paulosgp/guiaclinicoaps-update/main/atualizacao.json";
+var COUNTER_URL = "https://script.google.com/macros/s/AKfycbw-HxfZK1UHcqOF2CShR9oet5eE9_pdGGuKCvDLipFmUS3J8y151NUatLjhV5nSVQOc/exec";
 var BASE_VERSION = 1;
 var GRACE_DAYS = 10;
 var PREACTIVATE = null;  // {nome,cpf,chave} quando o arquivo é pré-ativado; senão null
@@ -334,6 +335,38 @@ function afterLicenseValid(lic){
 function entrarApp(){
   state={view:'home'}; initApp();
   if(onlineEnabled()) trySync(true);
+  reportDevice();
+}
+// ===== Contador de dispositivos por licença (modo monitor; pode virar limite) =====
+function counterEnabled(){ return typeof COUNTER_URL==='string' && COUNTER_URL.indexOf('http')===0; }
+function deviceId(){
+  try{ var d=localStorage.getItem('gca_dev'); if(d) return d;
+    var a; if(window.crypto&&crypto.getRandomValues){ a=crypto.getRandomValues(new Uint8Array(8)); } else { a=[]; for(var i=0;i<8;i++)a.push(Math.floor(Math.random()*256)); }
+    d=''; for(var j=0;j<a.length;j++) d+=('0'+a[j].toString(16)).slice(-2);
+    localStorage.setItem('gca_dev', d); return d;
+  }catch(e){ return 'nodev'; }
+}
+function reportDevice(){
+  if(!counterEnabled() || !LICENSE || LICENSE.master) return;
+  var u=COUNTER_URL+'?acao=check&chave='+encodeURIComponent(LICENSE.chave||'')+'&dev='+encodeURIComponent(deviceId())+
+        '&cpf='+encodeURIComponent(LICENSE.cpf||'')+'&nome='+encodeURIComponent(LICENSE.nome||'');
+  fetch(u,{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+    try{ localStorage.setItem('gca_devst', JSON.stringify({ok:!!j.ok, ativos:j.ativos, at:nowMs()})); }catch(e){}
+    if(j && j.ok===false && j.motivo==='limite'){ showDeviceLimit(j.ativos, j.limite); }
+  }).catch(function(){});
+}
+function freeDevice(){
+  if(!counterEnabled() || !LICENSE) return;
+  var u=COUNTER_URL+'?acao=free&chave='+encodeURIComponent(LICENSE.chave||'')+'&dev='+encodeURIComponent(deviceId());
+  try{ fetch(u,{cache:'no-store',keepalive:true}); }catch(e){}
+}
+function showDeviceLimit(ativos,limite){
+  ALLOWED=false; DEMO=false;
+  var sb=document.getElementById('searchbar'); if(sb)sb.style.display='none';
+  var g=document.getElementById('gear'); if(g)g.style.display='none';
+  var bar=document.getElementById('wmbar'); if(bar)bar.style.display='none';
+  document.getElementById('app').innerHTML='<div class="lic-gate"><div class="lic-card"><div class="lic-logo" style="background:var(--alarme)">&#9888;&#65039;</div><h2 style="color:var(--alarme)">Limite de dispositivos atingido</h2><p class="lic-sub">Esta licença já está em uso em '+(limite||3)+' aparelhos. Para usar aqui, desative em outro aparelho (tela Licença &rarr; Desativar) ou fale com o vendedor.</p><button class="btn ghost lic-btn" onclick="reportDevice()">Tentar novamente</button></div></div>';
+  var ft=document.getElementById('ft'); if(ft)ft.innerHTML=''; window.scrollTo(0,0);
 }
 function trySync(silent){
   if(!onlineEnabled()){ if(!silent) toast('Atualização online não configurada'); return; }
@@ -470,6 +503,7 @@ function doAtivar(){
 function entrarDemo(){ DEMO=true; state={view:'home'}; initApp(); window.scrollTo(0,0); }
 function desativarLicenca(){
   if(!confirm('Desativar a licença neste dispositivo? Você precisará reativar com a chave para voltar a usar.')) return;
+  try{ freeDevice(); }catch(e){}
   clearLicense(); LICENSE=null; ALLOWED=false; location.reload();
 }
 function licencaHTML(){
