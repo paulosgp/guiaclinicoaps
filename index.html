@@ -915,13 +915,17 @@ function prepFeatures(){
   ANAMNESE.forEach(function(f){ f._t=(f.termos||[]).map(function(t){return norm(t);}).filter(function(t){return t.length>=3;}); AFBYID[f.id]=f; });
 }
 function recHasFeature(r,f){ var tx=(r._buscaForte||'')+' '+(r._buscaFraca||''); for(var i=0;i<f._t.length;i++){ if(tx.indexOf(f._t[i])>=0) return true; } return false; }
+// Categorias de ROTINA que não fazem sentido como "condição provável" no assistente.
+// Mantém "Pré-Natal / Intercorrências" (queixas clínicas da gestante). Comparação exata.
+var ASSIST_CAT_FORA=['pre-natal','puericultura'];
+function assistCategoriaExcluida(r){ var c=norm(r.categoria||'').trim(); return ASSIST_CAT_FORA.indexOf(c)>=0; }
 function assistNeg(toks){ var neg={}; for(var i=0;i<toks.length-1;i++){ if(NEG.has(toks[i])){ var nx=toks[i+1]; if(nx&&nx.length>=3){ neg[nx]=1; neg[stemw(nx)]=1; } } } return neg; }
 function assistIniciar(){
   prepFeatures();
   var ta=document.getElementById('caso'); var caso=(ta?ta.value:'').trim();
   var out=document.getElementById('assistOut');
   if(caso.length<6){ if(out) out.innerHTML='<div class="empty">Descreva o caso com um pouco mais de detalhe (idade, sexo, queixa e tempo de evolução).</div>'; return; }
-  var recs=search(caso).slice(0,12);
+  var recs=search(caso).filter(function(r){ return !assistCategoriaExcluida(r); }).slice(0,12);
   if(!recs.length){ if(out) out.innerHTML='<div class="empty">Não encontrei condições relacionadas na base. Tente descrever a queixa/sintomas principais.</div>'; return; }
   var cand=recs.map(function(r,i){ return {r:r, base:(12-i)}; });
   var phrase=clean(caso); var toks=phrase.split(' ').filter(Boolean); var neg=assistNeg(toks);
