@@ -245,6 +245,15 @@
   .disc{background:#fff7ed;border:1px solid #fad9b0;border-radius:10px;padding:10px 12px;color:#7c4a13;font-size:12px;margin-top:10px}
   .ftlinks{margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
   .ftlinks a{cursor:pointer;font-size:12px}
+  .quick{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
+  .qbtn{flex:1;min-width:104px;display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 6px;font-size:13px;font-weight:600;color:var(--teal-d);cursor:pointer;box-shadow:var(--shadow)}
+  .qbtn:active{background:var(--teal-l)} .qbtn .qe{font-size:19px}
+  .ouv-cats{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 2px}
+  .ouv-cat{flex:1;min-width:72px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer}
+  .ouv-cat.on{background:var(--teal-l);border-color:var(--teal);color:var(--teal-d)}
+  .ouv-l{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:10px 0 3px;text-transform:uppercase;letter-spacing:.3px}
+  #ouv_msg{width:100%;box-sizing:border-box;min-height:100px;border:1px solid var(--line);border-radius:11px;padding:11px;font-size:15px;font-family:inherit;resize:vertical;outline:none}
+  #ouv_contato{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:9px;padding:10px;font-size:15px;outline:none}
   @media (min-width:620px){ .tiles{grid-template-columns:repeat(2,1fr)} }
 </style>
 </head>
@@ -256,6 +265,8 @@
         <div class="logo"><img src="data:image/png;base64,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" alt="GuiaClínicoAPS"></div>
         <div><h1>GuiaClínicoAPS</h1><div class="sub">APS &middot; Rotina &amp; Demanda Espontânea</div></div>
       </div>
+      <button class="gear" id="ajudabtn" title="Ajuda &amp; Suporte" onclick="go('ajuda')">&#10067;</button>
+      <button class="gear" id="licbtn" title="Minha licença (ativar / desvincular chave)" onclick="go('licenca')">&#128273;</button>
       <button class="gear" id="gear" title="Editor da base" onclick="go('editor')">&#9881;</button>
     </div>
     <div class="searchbar" id="searchbar">
@@ -286,6 +297,8 @@ var norm = function(s){ return (s||'').toString().normalize('NFD').replace(/[̀-
 // AVISO: inibidor de cópia, não proteção inquebrável — o segredo e a validação estão
 // neste arquivo. Serve para desencorajar repasse casual da versão licenciada.
 var APP_NAME = 'GuiaClínicoAPS';
+var OUV_WHATS = '5542988724354';
+var OUV_EMAIL = 'guiaaps.saude@gmail.com';
 var LIC_SECRET = "GuiaClinicoAPS::lic::e9058a7948bc641b6ca4c862c00a427ed10b58490b3cae3f::PAULO";
 var MASTER_KEY = "GUIACLINICO-MESTRA-PAULO";
 var LICENSE = null;     // {nome, cpf, chave, data}
@@ -364,6 +377,7 @@ function showDeviceLimit(ativos,limite){
   ALLOWED=false; DEMO=false;
   var sb=document.getElementById('searchbar'); if(sb)sb.style.display='none';
   var g=document.getElementById('gear'); if(g)g.style.display='none';
+  var _ab=document.getElementById('ajudabtn'); if(_ab)_ab.style.display='none'; var _lb=document.getElementById('licbtn'); if(_lb)_lb.style.display='none';
   var bar=document.getElementById('wmbar'); if(bar)bar.style.display='none';
   document.getElementById('app').innerHTML='<div class="lic-gate"><div class="lic-card"><div class="lic-logo" style="background:var(--alarme)">&#9888;&#65039;</div><h2 style="color:var(--alarme)">Limite de dispositivos atingido</h2><p class="lic-sub">Esta licença já está em uso em '+(limite||3)+' aparelhos. Para usar aqui, desative em outro aparelho (tela Licença &rarr; Desativar) ou fale com o vendedor.</p><button class="btn ghost lic-btn" onclick="reportDevice()">Tentar novamente</button></div></div>';
   var ft=document.getElementById('ft'); if(ft)ft.innerHTML=''; window.scrollTo(0,0);
@@ -387,6 +401,7 @@ function showRevoked(){
   ALLOWED=false; DEMO=false;
   var sb=document.getElementById('searchbar'); if(sb)sb.style.display='none';
   var g=document.getElementById('gear'); if(g)g.style.display='none';
+  var _ab=document.getElementById('ajudabtn'); if(_ab)_ab.style.display='none'; var _lb=document.getElementById('licbtn'); if(_lb)_lb.style.display='none';
   var bar=document.getElementById('wmbar'); if(bar)bar.style.display='none';
   document.getElementById('app').innerHTML='<div class="lic-gate"><div class="lic-card"><div class="lic-logo" style="background:var(--alarme)">&#9888;</div><h2 style="color:var(--alarme)">Licença bloqueada</h2><p class="lic-sub">Sua licença foi suspensa pelo fornecedor. Entre em contato para regularizar.</p><div class="lic-note">Seus dados e edições continuam salvos neste dispositivo. O acesso é restabelecido automaticamente após a regularização, na próxima vez que você se conectar à internet.</div><button class="btn ghost lic-btn" onclick="trySync(false)">Tentar novamente</button></div></div>';
   document.getElementById('ft').innerHTML=''; window.scrollTo(0,0);
@@ -395,6 +410,7 @@ function showMustConnect(){
   ALLOWED=false; DEMO=false; state={view:'mustconnect'};
   var sb=document.getElementById('searchbar'); if(sb)sb.style.display='none';
   var g=document.getElementById('gear'); if(g)g.style.display='none';
+  var _ab=document.getElementById('ajudabtn'); if(_ab)_ab.style.display='none'; var _lb=document.getElementById('licbtn'); if(_lb)_lb.style.display='none';
   var bar=document.getElementById('wmbar'); if(bar)bar.style.display='none';
   document.getElementById('app').innerHTML='<div class="lic-gate"><div class="lic-card"><div class="lic-logo">+</div><h2>'+APP_NAME+'</h2><p class="lic-sub">Para continuar, conecte-se à internet uma vez para revalidar a licença (passaram-se '+GRACE_DAYS+'+ dias sem verificação).</p><button class="btn primary lic-btn" onclick="trySync(false)">Conectar e revalidar</button></div></div>';
   document.getElementById('ft').innerHTML=''; window.scrollTo(0,0);
@@ -446,6 +462,8 @@ function demoSubset(list){
 function applyGateUI(){
   var sb=document.getElementById('searchbar'); if(sb) sb.style.display=ALLOWED?'':'none';
   var g=document.getElementById('gear'); if(g) g.style.display=canEdit()?'':'none';
+  var ab=document.getElementById('ajudabtn'); if(ab) ab.style.display=ALLOWED?'':'none';
+  var lb=document.getElementById('licbtn'); if(lb) lb.style.display=ALLOWED?'':'none';
   var bar=document.getElementById('wmbar'); var pw=document.getElementById('printwm');
   var line='';
   if(ALLOWED && !DEMO && LICENSE){ line=APP_NAME+' — Licenciado para: '+(LICENSE.nome||'—')+' — CPF '+maskCpf(LICENSE.cpf); }
@@ -746,6 +764,8 @@ function render(){
   else if(v==='editform') app.innerHTML=editFormHTML(state.arg);
   else if(v==='legal') app.innerHTML=legalHTML(state.arg);
   else if(v==='licenca') app.innerHTML=licencaHTML();
+  else if(v==='ouvidoria') app.innerHTML=ouvidoriaHTML();
+  else if(v==='ajuda') app.innerHTML=ajudaHTML();
   document.getElementById('ft').innerHTML=footHTML();
 }
 
@@ -762,6 +782,11 @@ function homeHTML(){
     '<div class="tile full tri" onclick="go(\'triagem\')"><div class="emo">&#128682;</div><div><h3>Triagem — Classificação de Risco</h3><p>Vermelho &middot; Laranja &middot; Amarelo &middot; Verde &middot; Azul</p></div></div>'+
     '<div class="tile ia full" onclick="go(\'assistente\')"><div class="emo">&#128269;</div><div><h3>Assistente de Caso</h3><p>Descreva o caso &rarr; condições prováveis com conduta consolidada (offline)</p></div></div>'+
     editorTile+
+  '</div>'+
+  '<div class="quick">'+
+    '<button class="qbtn" onclick="go(\'ajuda\')"><span class="qe">&#10067;</span>Ajuda &amp; Suporte</button>'+
+    '<button class="qbtn" onclick="go(\'ouvidoria\')"><span class="qe">&#128226;</span>Ouvidoria</button>'+
+    '<button class="qbtn" onclick="go(\'licenca\')"><span class="qe">&#128273;</span>Minha licença</button>'+
   '</div>'+
   '<div class="legend">'+
     '<b>Legenda das terapias medicamentosas <span style="color:var(--muted);font-weight:400">(toque para detalhes)</span></b>'+
@@ -1335,6 +1360,80 @@ function importData(input){
 function resetAll(){ if(!confirm('Descartar TODAS as suas edições e voltar à base original?')) return; localStorage.removeItem('ce_overlay'); computeData(); toast('Base original restaurada'); go('editor'); }
 
 // ===== Telas legais =====
+function ouvidoriaHTML(){
+  var cats=['Reclamação','Sugestão','Dúvida','Elogio'];
+  var waText='Olá! Sou usuário do '+APP_NAME+' e gostaria de falar com a ouvidoria.';
+  return '<div class="crumbs"><button class="btn" onclick="go(\'home\')">&larr; Início</button><span class="sech">&#128226; Ouvidoria</span></div>'+
+  '<div class="block"><h3>Fale com a gente</h3>'+
+  '<p style="font-size:14px;margin:0 0 6px">Reclamações, sugestões, dúvidas ou elogios sobre o aplicativo. Sua mensagem vai direto para o responsável.</p>'+
+  '<div class="ouv-cats">'+cats.map(function(c,i){ return '<button type="button" class="ouv-cat'+(i===1?' on':'')+'" data-c="'+c+'" onclick="ouvPickCat(this)">'+c+'</button>'; }).join('')+'</div>'+
+  '<label class="ouv-l">Sua mensagem</label>'+
+  '<textarea id="ouv_msg" maxlength="1200" placeholder="Escreva aqui..." oninput="ouvCount()"></textarea>'+
+  '<div id="ouv_cnt" style="font-size:12px;text-align:right;color:var(--muted)">0/1200</div>'+
+  '<label class="ouv-l">Seu contato (opcional — pra te responderem)</label>'+
+  '<input id="ouv_contato" placeholder="WhatsApp ou e-mail (opcional)">'+
+  '<label style="display:flex;gap:8px;align-items:center;font-size:13.5px;margin:10px 0;cursor:pointer"><input type="checkbox" id="ouv_anon" style="width:auto"> Enviar de forma anônima (não identifico minha chave)</label>'+
+  '<div class="disc" style="background:#fff7ed;border-color:#fad9b0;color:#7c4a13;font-size:12.5px;margin:0 0 4px">&#9888;&#65039; Não escreva dados de paciente (nome, CPF, cartão SUS). Use descrições gerais — LGPD.</div>'+
+  '<button class="btn primary lic-btn" id="ouv_btn" onclick="enviarOuvidoria()">Enviar</button>'+
+  '<div id="ouv_out" style="margin-top:10px;font-size:14px"></div>'+
+  '</div>'+
+  '<div class="block"><h3>Prefere outro canal?</h3>'+
+  '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+    '<a class="btn" href="https://wa.me/'+OUV_WHATS+'?text='+encodeURIComponent(waText)+'" target="_blank" rel="noopener">&#128241; WhatsApp</a>'+
+    '<a class="btn" href="mailto:'+OUV_EMAIL+'?subject='+encodeURIComponent('Ouvidoria '+APP_NAME)+'">&#9993;&#65039; E-mail</a>'+
+  '</div>'+
+  '<small class="muted" style="display:block;margin-top:8px;color:var(--muted)">WhatsApp (42) 98872-4354 &middot; '+OUV_EMAIL+'</small>'+
+  '</div>';
+}
+function ouvPickCat(b){ var bs=b.parentNode.querySelectorAll('.ouv-cat'); for(var i=0;i<bs.length;i++)bs[i].classList.remove('on'); b.classList.add('on'); }
+function ouvCount(){ var t=document.getElementById('ouv_msg'); var c=document.getElementById('ouv_cnt'); if(t&&c)c.textContent=t.value.length+'/1200'; }
+function enviarOuvidoria(){
+  var t=document.getElementById('ouv_msg'), out=document.getElementById('ouv_out');
+  var msg=(t.value||'').trim();
+  if(msg.length<5){ out.innerHTML='<span style="color:var(--alarme)">Escreva sua mensagem.</span>'; return; }
+  if(!counterEnabled()){ out.innerHTML='<span style="color:var(--alarme)">Canal online indisponível nesta versão. Use o WhatsApp/e-mail abaixo.</span>'; return; }
+  var ce=document.querySelector('.ouv-cat.on'); var cat=ce?ce.getAttribute('data-c'):'';
+  var contato=(document.getElementById('ouv_contato').value||'').trim();
+  var anon=document.getElementById('ouv_anon').checked;
+  var chave=(!anon&&LICENSE)?(LICENSE.chave||''):'';
+  var btn=document.getElementById('ouv_btn'); btn.disabled=true; out.innerHTML='Enviando...';
+  var u=COUNTER_URL+'?acao=ouvidoria&cat='+encodeURIComponent(cat)+'&msg='+encodeURIComponent(msg)+'&contato='+encodeURIComponent(contato)+'&chave='+encodeURIComponent(chave)+'&v='+encodeURIComponent(String(BASE_VERSION||''));
+  fetch(u,{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+    btn.disabled=false;
+    if(j&&j.ok){ out.innerHTML='<span style="color:var(--teal-d);font-weight:700">&#10004; Mensagem enviada. Obrigado pelo retorno!</span>'; t.value=''; ouvCount(); }
+    else { out.innerHTML='<span style="color:var(--alarme)">Não consegui enviar agora. Tente o WhatsApp/e-mail abaixo.</span>'; }
+  }).catch(function(){ btn.disabled=false; out.innerHTML='<span style="color:var(--alarme)">Sem conexão. Tente de novo online, ou use o WhatsApp/e-mail.</span>'; });
+}
+function ajudaHTML(){
+  var passos=[
+    'Use a <b>busca</b> no topo: digite uma queixa ("dor no ouvido"), parte do corpo ou nome da doença. Ela tolera erros de digitação.',
+    'Toque numa situação para ver o <b>SOAP</b>, terapias (com as etiquetas &#9989;&#128994;&#9888;&#65039;), <b>sinais de alarme</b> e <b>encaminhamento</b>.',
+    'Use o <b>Assistente de Caso</b>: descreva o caso e responda as perguntas para chegar nas condições prováveis.',
+    'Na <b>Triagem</b>, classifique o risco por cor.'
+  ];
+  var faq=[
+    ['As etiquetas &#9989; &#128994; &#9888;&#65039; — o que significam?','&#9989; <b>Enfermeiro pode prescrever</b>, se o protocolo ou portaria do seu município autorizar. &#128994; <b>Venda livre (MIP)</b> — isento de prescrição; você pode orientar. &#9888;&#65039; <b>Requer prescrição médica</b>. Na dúvida, não prescreva.'],
+    ['O app funciona sem internet?','Sim. Todo o conteúdo fica no seu aparelho e funciona offline. A internet é usada só de vez em quando, para baixar atualizações e validar a licença.'],
+    ['Posso usar em outro aparelho?','Sim. Abra o link, digite seu nome, CPF e a chave. A mesma licença pode ser ativada em mais de um aparelho (conforme o limite definido pelo vendedor).'],
+    ['Como troco de aparelho / desvinculo a chave?','Toque no &#128273; no topo (ou em "Minha licença") &rarr; <b>Desativar / Trocar licença</b>. Isso libera a chave para você ativar em outro aparelho.'],
+    ['Minha chave não funciona, e agora?','Confira se o <b>nome</b> e o <b>CPF</b> estão exatamente como na compra, e a chave com os tracinhos. Se persistir, fale conosco pela Ouvidoria.'],
+    ['Como edito ou faço backup do conteúdo?','Toque no &#9881; (Editor da Base). Lá dá para adicionar/editar situações e, em Backup, <b>exportar/importar</b> tudo num arquivo. Suas edições ficam só no seu aparelho.'],
+    ['O app substitui a avaliação clínica?','<b>Não.</b> É uma ferramenta de <b>apoio à decisão</b>. Sempre leia os sinais de alarme, respeite o escopo legal da enfermagem e encaminhe ao médico quando indicado.']
+  ];
+  var glos=[['SOAP','Subjetivo, Objetivo, Avaliação e Plano — a estrutura do registro da consulta.'],['CIAP','Classificação Internacional de Atenção Primária.'],['CID','Classificação Internacional de Doenças.'],['AIDPI','Atenção Integrada às Doenças Prevalentes na Infância.'],['PCDT','Protocolo Clínico e Diretrizes Terapêuticas (MS).'],['MIP','Medicamento Isento de Prescrição (venda livre).'],['PNI','Programa Nacional de Imunizações.']];
+  var h='<div class="crumbs"><button class="btn" onclick="go(\'home\')">&larr; Início</button><span class="sech">&#10067; Ajuda &amp; Suporte</span></div>';
+  h+='<div class="block"><h3>Primeiros passos</h3><ol style="margin:4px 0 0;padding-left:18px;font-size:14px;line-height:1.7">'+passos.map(function(p){return '<li>'+p+'</li>';}).join('')+'</ol></div>';
+  h+='<div class="block"><h3>Perguntas frequentes</h3>'+faq.map(function(f){return '<details class="dblk" style="margin:6px 0"><summary><span class="blk-title" style="text-transform:none;letter-spacing:0;font-size:14px">'+f[0]+'</span></summary><div style="font-size:14px;padding:8px 2px 2px;line-height:1.6">'+f[1]+'</div></details>';}).join('')+'</div>';
+  h+='<div class="block"><h3>Glossário</h3>'+glos.map(function(g){return '<div style="font-size:14px;margin:5px 0"><b>'+g[0]+'</b> — '+g[1]+'</div>';}).join('')+'</div>';
+  h+='<div class="block"><h3>Sobre &amp; contato</h3><div style="font-size:14px;line-height:1.8">'+
+     '<div><b>'+APP_NAME+'</b> &middot; '+STATS.total+' situações</div>'+
+     '<div>Apoio à decisão para enfermeiros da Atenção Primária.</div>'+
+     '<div>Conteúdo fundamentado em fontes públicas (Ministério da Saúde, PCDT, Cadernos de Atenção Básica).</div>'+
+     '<div style="margin-top:6px">Fale com a gente: <a onclick="go(\'ouvidoria\')" style="color:var(--teal-d);cursor:pointer;text-decoration:underline">Ouvidoria</a> &middot; '+OUV_EMAIL+'</div></div>'+
+     '<div style="margin-top:10px"><button class="btn" onclick="go(\'legal\',\'aviso\')">Aviso Legal</button> <button class="btn" onclick="go(\'legal\',\'termos\')">Termos</button> <button class="btn" onclick="go(\'legal\',\'privacidade\')">Privacidade</button></div>'+
+     '</div>';
+  return h;
+}
 function legalHTML(which){
   var h='<div class="crumbs"><button class="btn" onclick="go(\'home\')">&larr; Início</button></div>';
   if(which==='termos') h+='<div class="legaldoc">'+LEGAL_TERMOS+'</div>';
@@ -1389,6 +1488,7 @@ function showAvisoSeguranca(cb){
   _avisoCb=cb||null; ALLOWED=false;
   var sb=document.getElementById('searchbar'); if(sb)sb.style.display='none';
   var g=document.getElementById('gear'); if(g)g.style.display='none';
+  var _ab=document.getElementById('ajudabtn'); if(_ab)_ab.style.display='none'; var _lb=document.getElementById('licbtn'); if(_lb)_lb.style.display='none';
   var bar=document.getElementById('wmbar'); if(bar)bar.style.display='none';
   document.getElementById('app').innerHTML='<div class="lic-gate"><div class="lic-card" style="max-width:660px">'+
     '<div class="lic-logo" style="background:var(--alarme)">&#9888;&#65039;</div>'+
@@ -1414,7 +1514,7 @@ function footHTML(){
   else if(DEMO){ wm='<div style="font-weight:700;color:#7c4a13;margin-bottom:6px">'+APP_NAME+' — modo demonstração</div>'; }
   return wm+
   '<div class="disc">&#9888;&#65039; Ferramenta de apoio à decisão para uso profissional do enfermeiro. Não substitui julgamento clínico, protocolos oficiais nem a avaliação individual do paciente. Confira sempre doses e contraindicações.</div>'+
-  '<div class="ftlinks"><a onclick="go(\'legal\',\'termos\')">Termos de Uso</a><a onclick="go(\'legal\',\'privacidade\')">Política de Privacidade</a><a onclick="go(\'legal\',\'aviso\')">Aviso Legal</a><a onclick="go(\'licenca\')">&#128273; Licença</a></div>'+
+  '<div class="ftlinks"><a onclick="go(\'ajuda\')">&#10067; Ajuda</a><a onclick="go(\'ouvidoria\')">&#128226; Ouvidoria</a><a onclick="go(\'legal\',\'termos\')">Termos de Uso</a><a onclick="go(\'legal\',\'privacidade\')">Política de Privacidade</a><a onclick="go(\'legal\',\'aviso\')">Aviso Legal</a><a onclick="go(\'licenca\')">&#128273; Licença</a></div>'+
   '<div style="margin-top:8px">'+STATS.total+' situações &middot; conteúdo original fundamentado em fontes públicas (SUS/MS e sociedades). Revise e valide antes do uso clínico.</div>';
 }
 function copyEl(id){ var t=document.getElementById(id).innerText; navigator.clipboard.writeText(t).then(function(){ if(window.event&&window.event.target){window.event.target.textContent='✓ Copiado!'; setTimeout(function(){window.event.target.textContent='📋 Copiar texto';},1500);} }); }
