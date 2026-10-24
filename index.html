@@ -394,7 +394,10 @@ function getOverlay(){
   try{ var o=JSON.parse(localStorage.getItem('ce_overlay')||'null'); if(o&&typeof o==='object'){ o.added=o.added||[]; o.edits=o.edits||{}; o.deleted=o.deleted||[]; return o; } }catch(e){}
   return {added:[],edits:{},deleted:[]};
 }
-function effMeds(){ try{ var m=JSON.parse(localStorage.getItem('ce_meds')||'null'); if(m&&m.grupos) return m; }catch(e){} return MEDS; }
+// O rol de medicamentos é só de leitura no app (Paulo, 24/10/2026: só o autor o muda, em _dados/medicamentos.json).
+// O rol que uma versão antiga deixou salvo no aparelho (ce_meds) é apagado.
+try{ localStorage.removeItem('ce_meds'); }catch(e){}
+function effMeds(){ return MEDS; }
 function effBoost(){ try{ var b=JSON.parse(localStorage.getItem('ce_boost')||'null'); if(b&&b.length) return b; }catch(e){} return BOOST; }
 
 // ===== Materializar base efetiva (base + overlay) + índice de busca =====
@@ -664,13 +667,13 @@ function novidadesHTML(agora){
 function homeHTML(){
   var nE=DATA.filter(function(r){return r.secao==='espontanea';}).length;
   var nR=DATA.filter(function(r){return r.secao==='rotina';}).length;
-  var editorTile = canEdit() ? '<div class="tile ed full" onclick="go(\'editor\')"><div class="emo">&#9881;&#65039;</div><div><h3>Rol de Medicamentos</h3><p>Ajuste as etiquetas &#9989;&#128994;&#9888;&#65039; e os sinônimos de busca ao protocolo do seu município</p></div></div>' : '';
+  var editorTile = canEdit() ? '<div class="tile ed full" onclick="go(\'editor\')"><div class="emo">&#9881;&#65039;</div><div><h3>Rol de Medicamentos</h3><p>Consulte o rol de prescrição do enfermeiro e ajuste os sinônimos de busca</p></div></div>' : '';
   return ''+
   novidadesHTML()+
   '<div class="tiles">'+
     '<div class="tile esp" onclick="go(\'sec\',\'espontanea\')"><div class="emo">&#129658;</div><h3>Demanda Espontânea</h3><p>'+nE+' situações &middot; queixas agudas de balcão</p></div>'+
     '<div class="tile rot" onclick="go(\'sec\',\'rotina\')"><div class="emo">&#128203;</div><h3>Consultas de Rotina</h3><p>'+nR+' situações &middot; pré-natal, crônicos, puericultura...</p></div>'+
-    '<div class="tile full tri" onclick="go(\'triagem\')"><div class="emo">&#128682;</div><div><h3>Triagem — Classificação de Risco</h3><p>Vermelho &middot; Laranja &middot; Amarelo &middot; Verde &middot; Azul</p></div></div>'+
+    '<div class="tile full tri" onclick="go(\'triagem\')"><div class="emo">&#128682;</div><div><h3>Triagem — Classificação de Risco</h3><p>Vermelho &middot; Amarelo &middot; Verde &middot; Azul</p></div></div>'+
     '<div class="tile ia full" onclick="go(\'assistente\')"><div class="emo">&#128269;</div><div><h3>Assistente de Caso</h3><p>Descreva o caso &rarr; condições prováveis com conduta consolidada (offline)</p></div></div>'+
     '<div class="tile hid full" onclick="go(\'hidratacao\')"><div class="emo">&#129380;</div><div><h3>Calculadora de hidratação — dengue</h3><p>Volume de líquidos por dia pelo peso (adulto e criança), com SRO e líquidos caseiros</p></div></div>'+
     editorTile+
@@ -1003,12 +1006,12 @@ function triagemHTML(){
 function legendaHTML(){
   return '<div class="crumbs"><button class="btn" onclick="go(\'home\')">&larr; Início</button><span class="sech">Etiquetas de prescrição</span></div>'+
   '<div class="block"><h3>Como ler as etiquetas</h3>'+
-  '<p>'+presPill('enfermeiro')+'</p><p style="margin-top:-4px;font-size:14px">A substância consta no <b>rol de prescrição do enfermeiro</b> (baseada em protocolos de enfermagem e programas do SUS). O enfermeiro pode prescrever <b>se o protocolo clínico ou a portaria do seu município autorizar</b> — pois isso varia de lugar para lugar. Ajuste o rol à sua realidade no Editor.</p>'+
+  '<p>'+presPill('enfermeiro')+'</p><p style="margin-top:-4px;font-size:14px">A substância consta no <b>rol de prescrição do enfermeiro</b> (baseada em protocolos de enfermagem e programas do SUS). O enfermeiro pode prescrever <b>se o protocolo clínico ou a portaria do seu município autorizar</b> — pois isso varia de lugar para lugar. Na dúvida, não prescreva.</p>'+
   '<p>'+presPill('mip')+'</p><p style="margin-top:-4px;font-size:14px"><b>Medicamento Isento de Prescrição</b> (venda livre, conforme lista da ANVISA – IN 285/2024). Qualquer pessoa pode adquirir; o enfermeiro pode orientar o uso. <i>A condição de MIP pode depender da dose/apresentação.</i></p>'+
   '<p>'+presPill('medico')+'</p><p style="margin-top:-4px;font-size:14px"><b>Requer prescrição médica.</b> Substância sob controle especial (Portaria 344/98) ou de classe restrita ao médico (psicotrópicos, opioides, anticoagulantes, antineoplásicos etc.) — fora do escopo de prescrição do enfermeiro.</p>'+
   '<p>'+presPill('contraindicado')+'</p><p style="margin-top:-4px;font-size:14px"><b>Não usar neste quadro.</b> O remédio aparece na lista para deixar claro que <b>não deve ser usado naquela situação</b> (por exemplo, AINE e AAS na dengue, ou salbutamol e corticoide na bronquiolite). Não diz quem prescreve: diz que ninguém deve usar ali.</p>'+
   '</div>'+
-  '<div class="disc">As sugestões de terapia aparecem em todas as demandas, independentemente de quem prescreve. As etiquetas são apoio à decisão e <b>refletem listas de referência editáveis</b> — o protocolo de prescrição do enfermeiro varia por município. Confira sempre o protocolo local e ajuste o rol no Editor. Fontes: COFEN 801/2026, protocolos de enfermagem, ANVISA (IN 285/2024 e Portaria 344/98).</div>';
+  '<div class="disc">As sugestões de terapia aparecem em todas as demandas, independentemente de quem prescreve. As etiquetas são apoio à decisão e <b>seguem o rol do protocolo municipal de São Mateus do Sul</b>, que só o autor altera — o protocolo de prescrição do enfermeiro varia por município. Confira sempre o protocolo local. Fontes: COFEN 801/2026, protocolos de enfermagem, ANVISA (IN 285/2024 e Portaria 344/98).</div>';
 }
 
 // ===== EDITOR (rol de medicamentos + sinônimos) =====
@@ -1025,21 +1028,12 @@ function editorHTML(){
 }
 function editorMeds(){
   var m=effMeds();
-  var h='<div class="webnote">Rol de substâncias que o enfermeiro pode prescrever no seu município. Edite e salve — passa a valer para as etiquetas e para o app.</div>';
-  h+='<div class="ed-form"><label>Rol de medicamentos (formato: Grupo: substância1, substância2, ...) — uma linha por grupo</label>';
-  var txt=Object.keys(m.grupos).map(function(g){return g+': '+m.grupos[g].join(', ');}).join('\n');
-  h+='<textarea id="meds_txt" style="min-height:280px">'+esc(txt)+'</textarea>';
-  h+='<div class="actrow" style="margin-top:10px"><button class="btn primary" onclick="saveMeds()">Salvar rol</button><button class="btn ghost" onclick="resetMeds()">Restaurar padrão</button></div></div>';
+  var h='<div class="webnote">Rol de substâncias que o enfermeiro pode prescrever, de acordo com o protocolo municipal de São Mateus do Sul – PR. <b>Só o autor do Guia altera o rol</b>: ele não se edita pelo app. Achou algo a corrigir? Escreva pela Ouvidoria.</div>';
+  h+='<div class="ed-form">';
+  Object.keys(m.grupos).forEach(function(g){ h+='<p><b>'+esc(g)+':</b> '+esc(m.grupos[g].join(', '))+'</p>'; });
+  h+='</div>';
   return h;
 }
-function saveMeds(){
-  var txt=document.getElementById('meds_txt').value;
-  var grupos={};
-  txt.split('\n').forEach(function(l){ l=l.trim(); if(!l) return; var i=l.indexOf(':'); if(i<0){ grupos[l]=[]; return; } var g=l.slice(0,i).trim(); var subs=l.slice(i+1).split(',').map(function(x){return x.trim();}).filter(Boolean); grupos[g]=subs; });
-  var m={fonte:MEDS.fonte,atualizadoEm:'editado pelo usuário',grupos:grupos};
-  try{ localStorage.setItem('ce_meds',JSON.stringify(m)); toast('Rol salvo'); }catch(e){ alert('Erro ao salvar: '+e.message); }
-}
-function resetMeds(){ localStorage.removeItem('ce_meds'); toast('Rol restaurado'); render(); }
 function editorSyn(){
   var b=effBoost();
   var h='<div class="webnote">Dicionário de sinônimos de busca: cada grupo liga "gatilhos" (como o paciente fala) a "expansões" (termos clínicos). Formato por linha: gatilho1, gatilho2 => expansao1, expansao2</div>';
@@ -1187,7 +1181,7 @@ function ajudaHTML(){
     ['As etiquetas &#9989; &#128994; &#9888;&#65039; — o que significam?','&#9989; <b>Enfermeiro pode prescrever</b>, se o protocolo ou portaria do seu município autorizar. &#128994; <b>Venda livre (MIP)</b> — isento de prescrição; você pode orientar. &#9888;&#65039; <b>Requer prescrição médica</b>. Na dúvida, não prescreva.'],
     ['O app funciona sem internet?','Sim. Todo o conteúdo fica no seu aparelho e funciona offline. A internet é usada só de vez em quando, para baixar atualizações de conteúdo.'],
     ['Posso usar em outro aparelho?','Sim. É só abrir o mesmo link em qualquer aparelho — não precisa de cadastro nem chave.'],
-    ['Posso ajustar o rol de medicamentos ao protocolo do meu município?','Sim. Toque no &#9881; (Rol de Medicamentos): lá dá para editar quais substâncias o enfermeiro pode prescrever (&#9989;&#128994;&#9888;&#65039;) e os sinônimos de busca. As situações clínicas (SOAP, sinais de alarme, encaminhamento) não são editáveis pelo app — o conteúdo é de autoria própria e mantido pelo autor.'],
+    ['Posso mudar o rol de medicamentos?','Não. O rol (&#9989;&#128994;&#9888;&#65039;) segue o protocolo municipal de São Mateus do Sul e só o autor o altera. No &#9881; (Rol de Medicamentos) dá para consultar o rol e ajustar os sinônimos de busca. Em outro município, confira o protocolo local antes de prescrever. As situações clínicas (SOAP, sinais de alarme, encaminhamento) não são editáveis pelo app — o conteúdo é de autoria própria e mantido pelo autor.'],
     ['O app substitui a avaliação clínica?','<b>Não.</b> É uma ferramenta de <b>apoio à decisão</b>. Sempre leia os sinais de alarme, respeite o escopo legal da enfermagem e encaminhe ao médico quando indicado.']
   ];
   var glos=[['SOAP','Subjetivo, Objetivo, Avaliação e Plano — a estrutura do registro da consulta.'],['CIAP','Classificação Internacional de Atenção Primária.'],['CID','Classificação Internacional de Doenças.'],['AIDPI','Atenção Integrada às Doenças Prevalentes na Infância.'],['PCDT','Protocolo Clínico e Diretrizes Terapêuticas (MS).'],['MIP','Medicamento Isento de Prescrição (venda livre).'],['PNI','Programa Nacional de Imunizações.']];
@@ -1215,7 +1209,7 @@ function legalHTML(which){
 var LEGAL_AVISO='<h3>Aviso Legal e de Responsabilidade</h3>'+
 '<p>Este aplicativo é uma <b>ferramenta de apoio à decisão clínica</b> destinada a profissionais de enfermagem da Atenção Primária. Ele <b>não substitui</b> o julgamento clínico, a avaliação individual do paciente, os protocolos oficiais vigentes, nem a consulta às bulas e fontes primárias.</p>'+
 '<p>O conteúdo foi redigido de forma independente e fundamentado em fontes públicas (Ministério da Saúde, PCDT, Cadernos de Atenção Básica, sociedades de especialidade). Ainda assim, <b>doses, indicações e condutas devem ser conferidas e validadas</b> pelo profissional antes do uso, e ajustadas ao protocolo do seu município e ao escopo legal da enfermagem (normas do COFEN/COREN).</p>'+
-'<p>O escopo de prescrição do enfermeiro (etiquetas &#9989;/&#128994;/&#9888;&#65039;) reflete um protocolo municipal de referência e <b>pode não corresponder ao seu município</b>. Edite o rol no Editor conforme a sua realidade legal.</p>'+
+'<p>O escopo de prescrição do enfermeiro (etiquetas &#9989;/&#128994;/&#9888;&#65039;) reflete um protocolo municipal de referência e <b>pode não corresponder ao seu município</b>. O rol só é alterado pelo autor; confira o protocolo do seu município antes de prescrever.</p>'+
 '<h3>Possível enquadramento regulatório</h3>'+
 '<p>A depender do uso e da forma de distribuição, softwares voltados à saúde podem ser enquadrados como <b>dispositivo médico/software em saúde</b> e sujeitos à regulação da <b>ANVISA</b>, além da legislação profissional. <b>Recomenda-se conferência jurídica e regulatória</b> antes de uso institucional em larga escala.</p>'+
 '<p>O(s) autor(es) não se responsabilizam por decisões clínicas tomadas com base no aplicativo. O uso é de responsabilidade do profissional.</p>';
@@ -1238,7 +1232,7 @@ var LEGAL_TERMOS='<h3>Termos de Uso</h3>'+
 '<li>O aplicativo não presta serviço médico nem de enfermagem e não estabelece relação clínica.</li>'+
 '<li>As decisões e a responsabilidade pelo cuidado são exclusivamente do profissional.</li></ul>'+
 '<h3>Atualizações</h3>'+
-'<p>O conteúdo clínico é de autoria própria e mantido pelo autor, não editável pelo app. Use o Editor para adequar o rol de medicamentos ao seu protocolo municipal.</p>'+
+'<p>O conteúdo clínico é de autoria própria e mantido pelo autor, não editável pelo app, assim como o rol de medicamentos. Confira o protocolo do seu município antes de prescrever.</p>'+
 '<p style="margin-top:14px;font-size:12px;color:var(--muted)">Veja também o <a onclick="go(\'legal\',\'aviso\')">Aviso Legal</a> e a <a onclick="go(\'legal\',\'privacidade\')">Política de Privacidade</a>.</p>';
 
 // ===== Aviso de segurança / aceite na primeira abertura =====
